@@ -11,7 +11,7 @@ return [
     'cancel' => '取消',
     'create' => '建立聊天室',
     'mark_read' => '已讀',
-    'mark_all_read' => '全部標為已讀',
+    'mark_all_read' => '全部已讀',
 
     // 對話框標題
     'new_private_chat_title' => '開始新對話',

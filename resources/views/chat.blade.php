@@ -22,8 +22,8 @@
                                     <div class="flex space-x-2">
                                         <livewire:new-private-chat />
                                         <livewire:new-team-chat />
+                                        <livewire:mark-all-as-read />
                                     </div>
-                                    <livewire:mark-all-as-read />
                                 </div>
                             </div>
                             <div class="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600">

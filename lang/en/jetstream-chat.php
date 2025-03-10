@@ -11,7 +11,7 @@ return [
     'cancel' => 'Cancel',
     'create' => 'Create Chat',
     'mark_read' => 'Read',
-    'mark_all_read' => 'Mark All Read',
+    'mark_all_read' => 'All Read',
 
     // Dialog Titles
     'new_private_chat_title' => 'Start New Chat',
