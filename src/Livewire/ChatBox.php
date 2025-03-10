@@ -121,11 +121,4 @@ class ChatBox extends Component
         $this->dispatch('messagesUpdated');
         $this->dispatch('refresh-unread-count');
     }
-
-    public function markAllAsRead()
-    {
-        if ($this->conversationId) {
-            $this->markAsRead();
-        }
-    }
 }

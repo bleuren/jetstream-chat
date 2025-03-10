@@ -20,18 +20,21 @@
         x-transition:leave-end="opacity-0 scale-95"
         class="absolute right-0 z-50 mt-2 w-80 bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-lg shadow-lg py-2"
         style="display: none;">
-        <div class="px-4 py-2 border-b dark:border-gray-700">
+        <div class="px-4 py-2 border-b dark:border-gray-700 flex justify-between items-center">
             <h3 class="text-sm font-semibold text-gray-800 dark:text-white">{{ __('jetstream-chat::jetstream-chat.notifications') }}</h3>
+
+            @if($unreadCount > 0)
+            <x-button
+                wire:click="markAllAsRead"
+                class="text-xs px-2 py-1 h-7"
+                title="{{ __('jetstream-chat::jetstream-chat.mark_all_read') }}">
+                {{ __('jetstream-chat::jetstream-chat.mark_all_read') }}
+            </x-button>
+            @endif
         </div>
 
         @if($unreadCount > 0)
         <div class="max-h-60 overflow-y-auto">
-            <x-button
-                wire:click="$dispatch('mark-all-read')"
-                class="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 px-4 py-2">
-                {{ __('jetstream-chat::jetstream-chat.mark_all_read') }}
-            </x-button>
-
             <a href="{{ route('jetstream-chat') }}" class="block px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700">
                 <p class="text-sm font-medium text-gray-900 dark:text-white">
                     {{ __('jetstream-chat::jetstream-chat.unread_messages', ['count' => $unreadCount]) }}

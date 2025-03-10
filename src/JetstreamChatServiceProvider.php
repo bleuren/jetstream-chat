@@ -5,10 +5,10 @@ namespace Bleuren\JetstreamChat;
 use Bleuren\JetstreamChat\Livewire\BellNotification;
 use Bleuren\JetstreamChat\Livewire\ChatBox;
 use Bleuren\JetstreamChat\Livewire\ChatList;
+use Bleuren\JetstreamChat\Livewire\MarkAllAsRead;
 use Bleuren\JetstreamChat\Livewire\NewPrivateChat;
 use Bleuren\JetstreamChat\Livewire\NewTeamChat;
 use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 
@@ -100,5 +100,6 @@ class JetstreamChatServiceProvider extends ServiceProvider
         Livewire::component('new-private-chat', NewPrivateChat::class);
         Livewire::component('new-team-chat', NewTeamChat::class);
         Livewire::component('bell-notification', BellNotification::class);
+        Livewire::component('mark-all-as-read', MarkAllAsRead::class);
     }
 }

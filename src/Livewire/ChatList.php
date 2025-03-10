@@ -32,6 +32,7 @@ class ChatList extends Component
     public function render()
     {
         $user = Auth::user();
+
         $privateConversationIds = $user->conversations()->pluck('conversation_id');
         $privateConversations = Conversation::where('type', 'private')
             ->whereIn('id', $privateConversationIds)
