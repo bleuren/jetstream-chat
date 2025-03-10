@@ -4,8 +4,8 @@ namespace Bleuren\JetstreamChat\Livewire;
 
 use Bleuren\JetstreamChat\Models\ConversationParticipant;
 use Illuminate\Support\Facades\Auth;
-use Livewire\Component;
 use Livewire\Attributes\On;
+use Livewire\Component;
 
 class MarkAllAsRead extends Component
 {

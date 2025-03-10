@@ -63,9 +63,13 @@
                                     hover:bg-gray-100 dark:hover:bg-gray-700/50 text-gray-700 dark:text-gray-300
                                 @endif">
                         <div class="flex items-center">
+                            @if (Laravel\Jetstream\Jetstream::managesProfilePhotos())
+                            <img class="flex-shrink-0 w-8 h-8 rounded-full object-cover" src="{{ $otherUser->profile_photo_url }}" alt="{{ $otherUser->name }}">
+                            @else
                             <div class="flex-shrink-0 w-8 h-8 bg-gray-500 dark:bg-gray-600 rounded-full flex items-center justify-center">
                                 <span class="text-white text-sm">{{ $otherUser ? substr($otherUser->name, 0, 1) : '?' }}</span>
                             </div>
+                            @endif
                             <div class="ml-3 flex-grow">
                                 <div class="flex items-center justify-between">
                                     <p class="text-sm font-medium">{{ $otherUser ? $otherUser->name : __('jetstream-chat::jetstream-chat.unknown_user') }}</p>

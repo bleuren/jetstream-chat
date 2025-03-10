@@ -13,9 +13,13 @@
                     $otherParticipant = $conversation->participants->where('user_id', '!=', auth()->id())->first();
                     $otherUser = $otherParticipant ? $otherParticipant->user : null;
                     @endphp
+                    @if (Laravel\Jetstream\Jetstream::managesProfilePhotos())
+                    <img class="w-10 h-10 rounded-full object-cover" src="{{ $otherUser->profile_photo_url }}" alt="{{ $otherUser->name }}">
+                    @else
                     <div class="w-10 h-10 bg-gray-500 dark:bg-gray-600 rounded-full flex items-center justify-center">
                         <span class="text-white text-lg font-medium">{{ $otherUser ? substr($otherUser->name, 0, 1) : '?' }}</span>
                     </div>
+                    @endif
                     @endif
                 </div>
                 <div class="ml-3">
@@ -54,9 +58,13 @@
         <div class="flex @if($message->user_id === auth()->id()) justify-end @else justify-start @endif">
             <div class="flex @if($message->user_id === auth()->id()) flex-row-reverse @endif items-start max-w-[70%] group">
                 <div class="flex-shrink-0 @if($message->user_id === auth()->id()) ml-2 @else mr-2 @endif">
+                    @if (Laravel\Jetstream\Jetstream::managesProfilePhotos())
+                    <img class="w-8 h-8 rounded-full object-cover" src="{{ $message->user->profile_photo_url }}" alt="{{ $message->user->name }}">
+                    @else
                     <div class="w-8 h-8 bg-gray-400 dark:bg-gray-600 rounded-full flex items-center justify-center">
                         <span class="text-white text-sm font-medium">{{ substr($message->user->name, 0, 1) }}</span>
                     </div>
+                    @endif
                 </div>
                 <div class="flex flex-col">
                     <div class="@if($message->user_id === auth()->id())
