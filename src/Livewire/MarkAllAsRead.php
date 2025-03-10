@@ -5,6 +5,7 @@ namespace Bleuren\JetstreamChat\Livewire;
 use Bleuren\JetstreamChat\Models\ConversationParticipant;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
+use Livewire\Attributes\On;
 
 class MarkAllAsRead extends Component
 {
@@ -13,6 +14,7 @@ class MarkAllAsRead extends Component
         return view('jetstream-chat::livewire.mark-all-as-read');
     }
 
+    #[On('mark-all-as-read')]
     public function markAllAsRead()
     {
         ConversationParticipant::where('user_id', Auth::id())

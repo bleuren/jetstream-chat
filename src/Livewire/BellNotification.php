@@ -32,6 +32,11 @@ class BellNotification extends Component
         $this->unreadCount = $user->unreadMessagesCount();
     }
 
+    public function markAllAsRead()
+    {
+        $this->dispatch('mark-all-as-read');
+    }
+
     public function render()
     {
         return view('jetstream-chat::livewire.bell-notification');
