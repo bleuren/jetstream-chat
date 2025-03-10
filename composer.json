@@ -1,0 +1,29 @@
+{
+    "name": "bleuren/jetstream-chat",
+    "description": "A Laravel Jetstream-integrated chat package supporting team and private conversations",
+    "type": "library",
+    "license": "MIT",
+    "require": {
+        "php": "^8.2",
+        "laravel/framework": "^12.0",
+        "laravel/jetstream": "^5.3",
+        "livewire/livewire": "^3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Bleuren\\JetstreamChat\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Bleuren\\JetstreamChat\\JetstreamChatServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

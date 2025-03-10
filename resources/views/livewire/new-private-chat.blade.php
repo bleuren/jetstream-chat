@@ -1,0 +1,59 @@
+<div>
+    <x-button
+        wire:click="openModal"
+        class="flex items-center">
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+        </svg>
+        {{ __('jetstream-chat::jetstream-chat.new_private_chat') }}
+    </x-button>
+
+    <x-dialog-modal wire:model="showModal">
+        <x-slot name="title">
+            <h2 class="text-lg font-medium">{{ __('jetstream-chat::jetstream-chat.new_private_chat_title') }}</h2>
+            <p class="mt-1 text-sm text-gray-500">{{ __('jetstream-chat::jetstream-chat.new_private_chat_subtitle') }}</p>
+        </x-slot>
+
+        <x-slot name="content">
+            <div class="space-y-4">
+                <div class="relative">
+                    <x-input
+                        type="text"
+                        wire:model.live="searchQuery"
+                        class="w-full pr-10"
+                        placeholder="{{ __('jetstream-chat::jetstream-chat.search_users') }}" />
+                    <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="space-y-1 max-h-60 overflow-y-auto">
+                    @foreach($searchResults as $user)
+                    <button
+                        wire:click="startConversation({{ $user->id }})"
+                        class="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-150 ease-in-out">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0 w-8 h-8 bg-gray-500 dark:bg-gray-600 rounded-full flex items-center justify-center">
+                                <span class="text-white text-sm">{{ substr($user->name, 0, 1) }}</span>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm font-medium text-gray-900 dark:text-white">{{ $user->name }}</p>
+                            </div>
+                        </div>
+                    </button>
+                    @endforeach
+                </div>
+            </div>
+        </x-slot>
+
+        <x-slot name="footer">
+            <div class="flex justify-end space-x-3">
+                <x-secondary-button wire:click="closeModal">
+                    {{ __('jetstream-chat::jetstream-chat.cancel') }}
+                </x-secondary-button>
+            </div>
+        </x-slot>
+    </x-dialog-modal>
+</div>
