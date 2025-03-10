@@ -10,6 +10,25 @@ class ChatList extends Component
 {
     public $activeConversationId = null;
 
+    protected $listeners = [
+        'conversationAdded' => '$refresh',
+        'refresh-chat-list' => '$refresh',
+    ];
+
+    public function getListeners()
+    {
+        $userId = auth()->id();
+
+        return array_merge($this->listeners, [
+            "echo-private:App.Models.User.{$userId},.ConversationCreated" => 'handleConversationCreated',
+        ]);
+    }
+
+    public function handleConversationCreated()
+    {
+        $this->dispatch('refresh-unread-count');
+    }
+
     public function render()
     {
         $user = Auth::user();
@@ -17,11 +36,17 @@ class ChatList extends Component
         $privateConversationIds = $user->conversations()->pluck('conversation_id');
         $privateConversations = Conversation::where('type', 'private')
             ->whereIn('id', $privateConversationIds)
+            ->with(['latestMessage', 'participants.user', 'participants' => function ($query) use ($user) {
+                $query->where('user_id', $user->id);
+            }])
             ->get();
 
         $teamIds = $user->allTeams()->pluck('id');
         $teamConversations = Conversation::where('type', 'team')
             ->whereIn('team_id', $teamIds)
+            ->with(['team', 'latestMessage', 'participants' => function ($query) use ($user) {
+                $query->where('user_id', $user->id);
+            }])
             ->get();
 
         return view('jetstream-chat::livewire.chat-list', [
@@ -34,5 +59,15 @@ class ChatList extends Component
     {
         $this->activeConversationId = $conversationId;
         $this->dispatch('conversation-selected', conversationId: $conversationId);
+
+        // Mark conversation as read when selected
+        $conversation = Conversation::find($conversationId);
+        if ($conversation) {
+            $participant = $conversation->participants()->where('user_id', Auth::id())->first();
+            if ($participant) {
+                $participant->markAsRead();
+                $this->dispatch('refresh-unread-count');
+            }
+        }
     }
 }

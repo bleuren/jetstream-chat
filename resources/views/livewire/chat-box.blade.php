@@ -1,33 +1,46 @@
 <div class="flex flex-col h-full">
     @if($conversation)
     <div class="flex-none px-4 py-3 border-b dark:border-gray-700 bg-white dark:bg-gray-800">
-        <div class="flex items-center">
-            <div class="flex-shrink-0">
-                @if($conversation->type == 'team')
-                <div class="w-10 h-10 bg-blue-500 dark:bg-blue-600 rounded-full flex items-center justify-center">
-                    <span class="text-white text-lg font-medium">{{ substr($conversation->team->name, 0, 1) }}</span>
-                </div>
-                @else
-                @php
-                $otherParticipant = $conversation->participants->where('user_id', '!=', auth()->id())->first();
-                $otherUser = $otherParticipant ? $otherParticipant->user : null;
-                @endphp
-                <div class="w-10 h-10 bg-gray-500 dark:bg-gray-600 rounded-full flex items-center justify-center">
-                    <span class="text-white text-lg font-medium">{{ $otherUser ? substr($otherUser->name, 0, 1) : '?' }}</span>
-                </div>
-                @endif
-            </div>
-            <div class="ml-3">
-                <h3 class="text-lg font-medium text-gray-900 dark:text-white">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
                     @if($conversation->type == 'team')
-                    {{ $conversation->team->name }}
-                    <span class="ml-2 text-sm text-gray-500 dark:text-gray-400">{{ __('jetstream-chat::jetstream-chat.team_chat_room') }}</span>
+                    <div class="w-10 h-10 bg-blue-500 dark:bg-blue-600 rounded-full flex items-center justify-center">
+                        <span class="text-white text-lg font-medium">{{ substr($conversation->team->name, 0, 1) }}</span>
+                    </div>
                     @else
-                    {{ $otherUser ? $otherUser->name : __('jetstream-chat::jetstream-chat.unknown_user') }}
-                    <span class="ml-2 text-sm text-gray-500 dark:text-gray-400">{{ __('jetstream-chat::jetstream-chat.private_conversation') }}</span>
+                    @php
+                    $otherParticipant = $conversation->participants->where('user_id', '!=', auth()->id())->first();
+                    $otherUser = $otherParticipant ? $otherParticipant->user : null;
+                    @endphp
+                    <div class="w-10 h-10 bg-gray-500 dark:bg-gray-600 rounded-full flex items-center justify-center">
+                        <span class="text-white text-lg font-medium">{{ $otherUser ? substr($otherUser->name, 0, 1) : '?' }}</span>
+                    </div>
                     @endif
-                </h3>
+                </div>
+                <div class="ml-3">
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-white">
+                        @if($conversation->type == 'team')
+                        {{ $conversation->team->name }}
+                        <span class="ml-2 text-sm text-gray-500 dark:text-gray-400">{{ __('jetstream-chat::jetstream-chat.team_chat_room') }}</span>
+                        @else
+                        {{ $otherUser ? $otherUser->name : __('jetstream-chat::jetstream-chat.unknown_user') }}
+                        <span class="ml-2 text-sm text-gray-500 dark:text-gray-400">{{ __('jetstream-chat::jetstream-chat.private_conversation') }}</span>
+                        @endif
+                    </h3>
+                </div>
             </div>
+
+            <!-- Mark all as read button -->
+            <x-button
+                wire:click="markAllAsRead"
+                class="text-xs"
+                title="{{ __('jetstream-chat::jetstream-chat.mark_all_read') }}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                <span class="ml-1">{{ __('jetstream-chat::jetstream-chat.mark_read') }}</span>
+            </x-button>
         </div>
     </div>
 
@@ -109,6 +122,10 @@
 
         Livewire.on('echo-leave', (channelName) => {
             window.Echo.leave(channelName);
+        });
+
+        Livewire.on('mark-all-read', () => {
+            Livewire.dispatch('refresh-unread-count');
         });
     });
 </script>

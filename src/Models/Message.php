@@ -2,6 +2,7 @@
 
 namespace Bleuren\JetstreamChat\Models;
 
+use Bleuren\JetstreamChat\Events\MessageCreated;
 use Illuminate\Database\Eloquent\BroadcastsEvents;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -14,6 +15,10 @@ class Message extends Model
         'conversation_id',
         'user_id',
         'body',
+    ];
+
+    protected $dispatchesEvents = [
+        'created' => MessageCreated::class,
     ];
 
     public function conversation(): BelongsTo

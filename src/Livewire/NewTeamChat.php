@@ -2,7 +2,9 @@
 
 namespace Bleuren\JetstreamChat\Livewire;
 
+use Bleuren\JetstreamChat\Events\ConversationCreated;
 use Bleuren\JetstreamChat\Models\Conversation;
+use Bleuren\JetstreamChat\Models\ConversationParticipant;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Jetstream\Jetstream;
 use Livewire\Component;
@@ -21,6 +23,7 @@ class NewTeamChat extends Component
     public function closeModal()
     {
         $this->showModal = false;
+        $this->reset('selectedTeamId');
     }
 
     public function render()
@@ -53,6 +56,7 @@ class NewTeamChat extends Component
 
         if ($existingConversation) {
             $this->dispatch('conversation-selected', conversationId: $existingConversation->id);
+            $this->closeModal();
 
             return;
         }
@@ -62,8 +66,20 @@ class NewTeamChat extends Component
             'team_id' => $this->selectedTeamId,
         ]);
 
+        // Add all team members as participants
+        foreach ($team->users as $teamUser) {
+            ConversationParticipant::create([
+                'conversation_id' => $conversation->id,
+                'user_id' => $teamUser->id,
+                'last_read_at' => $teamUser->id === $user->id ? now() : null,
+            ]);
+        }
+
+        // Broadcast the new conversation to all team members
+        ConversationCreated::dispatch($conversation);
+
         $this->dispatch('conversation-selected', conversationId: $conversation->id);
-        $this->reset('selectedTeamId');
+        $this->dispatch('conversationAdded');
         $this->closeModal();
     }
 }

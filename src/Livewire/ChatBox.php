@@ -3,6 +3,7 @@
 namespace Bleuren\JetstreamChat\Livewire;
 
 use Bleuren\JetstreamChat\Models\Conversation;
+use Bleuren\JetstreamChat\Models\ConversationParticipant;
 use Bleuren\JetstreamChat\Models\Message;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\On;
@@ -27,6 +28,29 @@ class ChatBox extends Component
         // Subscribe to the new conversation channel
         if ($this->conversationId) {
             $this->dispatch('echo-join', "App.Models.Conversation.{$this->conversationId}");
+            $this->markAsRead();
+        }
+    }
+
+    public function mount()
+    {
+        if ($this->conversationId) {
+            $this->markAsRead();
+        }
+    }
+
+    protected function markAsRead()
+    {
+        if ($this->conversationId) {
+            $participant = ConversationParticipant::where([
+                'conversation_id' => $this->conversationId,
+                'user_id' => Auth::id(),
+            ])->first();
+
+            if ($participant) {
+                $participant->markAsRead();
+                $this->dispatch('refresh-unread-count');
+            }
         }
     }
 
@@ -80,14 +104,28 @@ class ChatBox extends Component
 
     public function getListeners()
     {
-        return [
+        $listeners = [
             'conversation-selected' => 'loadConversation',
             'message-received' => 'handleNewMessage',
         ];
+
+        if ($this->conversationId) {
+            $listeners["echo-private:App.Models.Conversation.{$this->conversationId},.MessageCreated"] = 'handleNewMessage';
+        }
+
+        return $listeners;
     }
 
     public function handleNewMessage()
     {
         $this->dispatch('messagesUpdated');
+        $this->dispatch('refresh-unread-count');
+    }
+
+    public function markAllAsRead()
+    {
+        if ($this->conversationId) {
+            $this->markAsRead();
+        }
     }
 }

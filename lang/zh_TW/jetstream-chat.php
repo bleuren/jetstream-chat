@@ -10,6 +10,8 @@ return [
     'send' => '發送',
     'cancel' => '取消',
     'create' => '建立聊天室',
+    'mark_read' => '已讀',
+    'mark_all_read' => '全部標為已讀',
 
     // 對話框標題
     'new_private_chat_title' => '開始新對話',
@@ -31,6 +33,12 @@ return [
     'private_conversation' => '私人對話',
     'unknown_user' => '未知用戶',
     'select_conversation' => '選擇一個對話開始聊天',
+
+    // 通知文字
+    'notifications' => '通知',
+    'no_new_notifications' => '沒有新通知',
+    'unread_messages' => ':count 則未讀訊息',
+    'check_conversations' => '點擊查看對話',
 
     // 錯誤訊息
     'not_team_member' => '您不是該團隊的成員',

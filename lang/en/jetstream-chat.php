@@ -10,6 +10,8 @@ return [
     'send' => 'Send',
     'cancel' => 'Cancel',
     'create' => 'Create Chat',
+    'mark_read' => 'Read',
+    'mark_all_read' => 'Mark All Read',
 
     // Dialog Titles
     'new_private_chat_title' => 'Start New Chat',
@@ -31,6 +33,12 @@ return [
     'private_conversation' => 'Private Conversation',
     'unknown_user' => 'Unknown User',
     'select_conversation' => 'Select a conversation to start chatting',
+
+    // Notification Text
+    'notifications' => 'Notifications',
+    'no_new_notifications' => 'No new notifications',
+    'unread_messages' => ':count unread messages',
+    'check_conversations' => 'Click to check your conversations',
 
     // Error Messages
     'not_team_member' => 'You are not a member of this team',

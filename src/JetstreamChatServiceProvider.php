@@ -2,6 +2,7 @@
 
 namespace Bleuren\JetstreamChat;
 
+use Bleuren\JetstreamChat\Livewire\BellNotification;
 use Bleuren\JetstreamChat\Livewire\ChatBox;
 use Bleuren\JetstreamChat\Livewire\ChatList;
 use Bleuren\JetstreamChat\Livewire\NewPrivateChat;
@@ -98,5 +99,6 @@ class JetstreamChatServiceProvider extends ServiceProvider
         Livewire::component('chat-list', ChatList::class);
         Livewire::component('new-private-chat', NewPrivateChat::class);
         Livewire::component('new-team-chat', NewTeamChat::class);
+        Livewire::component('bell-notification', BellNotification::class);
     }
 }

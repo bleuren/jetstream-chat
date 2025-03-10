@@ -2,6 +2,7 @@
 
 namespace Bleuren\JetstreamChat\Livewire;
 
+use Bleuren\JetstreamChat\Events\ConversationCreated;
 use Bleuren\JetstreamChat\Models\Conversation;
 use Bleuren\JetstreamChat\Models\ConversationParticipant;
 use Illuminate\Support\Facades\Auth;
@@ -23,6 +24,7 @@ class NewPrivateChat extends Component
     public function closeModal()
     {
         $this->showModal = false;
+        $this->reset('searchQuery', 'searchResults');
     }
 
     public function render()
@@ -61,6 +63,7 @@ class NewPrivateChat extends Component
 
         if ($existingConversation) {
             $this->dispatch('conversation-selected', conversationId: $existingConversation->id);
+            $this->closeModal();
 
             return;
         }
@@ -72,6 +75,7 @@ class NewPrivateChat extends Component
         ConversationParticipant::create([
             'conversation_id' => $conversation->id,
             'user_id' => Auth::id(),
+            'last_read_at' => now(),
         ]);
 
         ConversationParticipant::create([
@@ -79,8 +83,11 @@ class NewPrivateChat extends Component
             'user_id' => $userId,
         ]);
 
+        // Broadcast the new conversation to both users
+        ConversationCreated::dispatch($conversation);
+
         $this->dispatch('conversation-selected', conversationId: $conversation->id);
-        $this->reset('searchQuery', 'searchResults');
+        $this->dispatch('conversationAdded');
         $this->closeModal();
     }
 }

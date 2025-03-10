@@ -33,4 +33,12 @@ class Conversation extends Model
     {
         return 'App.Models.Conversation.'.$this->id;
     }
+
+    /**
+     * Get the latest message of the conversation.
+     */
+    public function latestMessage()
+    {
+        return $this->hasOne(Message::class)->latest();
+    }
 }
