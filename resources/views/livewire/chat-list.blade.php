@@ -29,14 +29,15 @@
                                     </span>
                                     @endif
                                 </div>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">{{ __('jetstream-chat::jetstream-chat.team_chat_room') }}</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">
+                                    @if($conversation->latestMessage)
+                                    {{ $conversation->latestMessage->body }}
+                                    @else
+                                    {{ __('jetstream-chat::jetstream-chat.team_chat_room') }}
+                                    @endif
+                                </p>
                             </div>
                         </div>
-                        @if($conversation->latestMessage)
-                        <div class="mt-1 pl-11 truncate text-xs text-gray-500 dark:text-gray-400">
-                            {{ $conversation->latestMessage->body }}
-                        </div>
-                        @endif
                     </button>
                 </li>
                 @endforeach
@@ -74,14 +75,15 @@
                                     </span>
                                     @endif
                                 </div>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">{{ __('jetstream-chat::jetstream-chat.private_conversation') }}</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">
+                                    @if($conversation->latestMessage)
+                                    {{ $conversation->latestMessage->body }}
+                                    @else
+                                    {{ __('jetstream-chat::jetstream-chat.private_conversation') }}
+                                    @endif
+                                </p>
                             </div>
                         </div>
-                        @if($conversation->latestMessage)
-                        <div class="mt-1 pl-11 truncate text-xs text-gray-500 dark:text-gray-400">
-                            {{ $conversation->latestMessage->body }}
-                        </div>
-                        @endif
                     </button>
                 </li>
                 @endforeach

@@ -5,8 +5,8 @@ return [
     'title' => '聊天',
 
     // 按鈕文字
-    'new_private_chat' => '開始新對話',
-    'new_team_chat' => '建立團隊聊天室',
+    'new_private_chat' => '新對話',
+    'new_team_chat' => '團隊聊天室',
     'send' => '發送',
     'cancel' => '取消',
     'create' => '建立聊天室',
