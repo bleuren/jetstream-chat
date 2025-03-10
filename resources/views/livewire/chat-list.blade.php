@@ -5,8 +5,7 @@
             <ul class="mt-2 space-y-1">
                 @foreach($teamConversations as $conversation)
                 @php
-                $participant = $conversation->participants->first();
-                $unreadCount = $participant ? $participant->unread_count : 0;
+                $unreadCount = $conversation->currentUserParticipant ? $conversation->currentUserParticipant->unread_count : 0;
                 @endphp
                 <li>
                     <button
@@ -49,9 +48,8 @@
             <ul class="mt-2 space-y-1">
                 @foreach($privateConversations as $conversation)
                 @php
-                $participant = $conversation->participants->first();
-                $unreadCount = $participant ? $participant->unread_count : 0;
-                $otherParticipant = $conversation->participants->where('user_id', '!=', auth()->id())->first();
+                $unreadCount = $conversation->currentUserParticipant ? $conversation->currentUserParticipant->unread_count : 0;
+                $otherParticipant = $conversation->otherParticipants->first();
                 $otherUser = $otherParticipant ? $otherParticipant->user : null;
                 @endphp
                 <li>

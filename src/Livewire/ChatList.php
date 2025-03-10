@@ -32,21 +32,24 @@ class ChatList extends Component
     public function render()
     {
         $user = Auth::user();
-
         $privateConversationIds = $user->conversations()->pluck('conversation_id');
         $privateConversations = Conversation::where('type', 'private')
             ->whereIn('id', $privateConversationIds)
-            ->with(['latestMessage', 'participants.user', 'participants' => function ($query) use ($user) {
-                $query->where('user_id', $user->id);
-            }])
+            ->with([
+                'latestMessage',
+                'currentUserParticipant',
+                'otherParticipants.user',
+            ])
             ->get();
 
         $teamIds = $user->allTeams()->pluck('id');
         $teamConversations = Conversation::where('type', 'team')
             ->whereIn('team_id', $teamIds)
-            ->with(['team', 'latestMessage', 'participants' => function ($query) use ($user) {
-                $query->where('user_id', $user->id);
-            }])
+            ->with([
+                'team',
+                'latestMessage',
+                'currentUserParticipant',
+            ])
             ->get();
 
         return view('jetstream-chat::livewire.chat-list', [
@@ -63,7 +66,7 @@ class ChatList extends Component
         // Mark conversation as read when selected
         $conversation = Conversation::find($conversationId);
         if ($conversation) {
-            $participant = $conversation->participants()->where('user_id', Auth::id())->first();
+            $participant = $conversation->currentUserParticipant;
             if ($participant) {
                 $participant->markAsRead();
                 $this->dispatch('refresh-unread-count');
