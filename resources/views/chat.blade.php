@@ -4,9 +4,6 @@
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                 {{ __('jetstream-chat::jetstream-chat.title') }}
             </h2>
-            <div>
-                <livewire:bell-notification />
-            </div>
         </div>
     </x-slot>
 
