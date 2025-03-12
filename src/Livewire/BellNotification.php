@@ -2,11 +2,15 @@
 
 namespace Bleuren\JetstreamChat\Livewire;
 
+use Bleuren\JetstreamChat\Traits\HasMarkAllAsRead;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
 class BellNotification extends Component
 {
+    use HasMarkAllAsRead;
+
     public $unreadCount = 0;
 
     public function mount()
@@ -16,7 +20,7 @@ class BellNotification extends Component
 
     public function getListeners()
     {
-        $userId = auth()->id();
+        $userId = Auth::id();
 
         return [
             "echo-private:App.Models.User.{$userId},.ConversationCreated" => 'updateUnreadCount',
@@ -29,13 +33,8 @@ class BellNotification extends Component
     #[On('refresh-unread-count')]
     public function updateUnreadCount()
     {
-        $user = auth()->user();
+        $user = Auth::user();
         $this->unreadCount = $user->unreadMessagesCount();
-    }
-
-    public function markAllAsRead()
-    {
-        $this->dispatch('mark-all-as-read');
     }
 
     public function render()
