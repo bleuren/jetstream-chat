@@ -2,7 +2,6 @@
 
 namespace Bleuren\JetstreamChat\Livewire;
 
-use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class BellNotification extends Component
@@ -28,7 +27,7 @@ class BellNotification extends Component
 
     public function updateUnreadCount()
     {
-        $user = Auth::user();
+        $user = auth()->user();
         $this->unreadCount = $user->unreadMessagesCount();
     }
 

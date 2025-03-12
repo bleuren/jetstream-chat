@@ -21,7 +21,13 @@ class ChatList extends Component
 
         return array_merge($this->listeners, [
             "echo-private:App.Models.User.{$userId},.ConversationCreated" => 'handleConversationCreated',
+            "echo-private:App.Models.User.{$userId},.MessageCreated" => 'handleMessageCreated',
         ]);
+    }
+
+    public function handleMessageCreated()
+    {
+        $this->dispatch('refresh-chat-list');
     }
 
     public function handleConversationCreated()

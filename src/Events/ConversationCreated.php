@@ -33,4 +33,9 @@ class ConversationCreated implements ShouldBroadcast
 
         return $channels;
     }
+
+    public function broadcastAs(): string
+    {
+        return 'ConversationCreated';
+    }
 }

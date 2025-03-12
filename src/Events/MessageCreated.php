@@ -36,8 +36,17 @@ class MessageCreated implements ShouldBroadcast
      */
     public function broadcastOn(): array
     {
-        return [
-            new PrivateChannel('App.Models.Conversation.'.$this->message->conversation_id),
-        ];
+        foreach ($this->message->conversation->otherParticipants as $participant) {
+            $channels[] = new PrivateChannel('App.Models.User.'.$participant->user_id);
+        }
+
+        $channels[] = new PrivateChannel('App.Models.Conversation.'.$this->message->conversation_id);
+
+        return $channels;
+    }
+
+    public function broadcastAs(): string
+    {
+        return 'MessageCreated';
     }
 }

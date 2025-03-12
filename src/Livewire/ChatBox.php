@@ -2,6 +2,7 @@
 
 namespace Bleuren\JetstreamChat\Livewire;
 
+use Bleuren\JetstreamChat\Events\MessageCreated;
 use Bleuren\JetstreamChat\Models\Conversation;
 use Bleuren\JetstreamChat\Models\ConversationParticipant;
 use Bleuren\JetstreamChat\Models\Message;
@@ -100,6 +101,8 @@ class ChatBox extends Component
 
         $this->reset('messageText');
         $this->dispatch('messagesUpdated');
+
+        MessageCreated::dispatch($message);
     }
 
     public function getListeners()
