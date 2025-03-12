@@ -2,6 +2,7 @@
 
 namespace Bleuren\JetstreamChat\Livewire;
 
+use Bleuren\JetstreamChat\Events\ConversationRead;
 use Bleuren\JetstreamChat\Events\MessageCreated;
 use Bleuren\JetstreamChat\Models\Conversation;
 use Bleuren\JetstreamChat\Models\ConversationParticipant;
@@ -16,42 +17,10 @@ class ChatBox extends Component
 
     public $messageText = '';
 
-    #[On('conversation-selected')]
-    public function loadConversation($conversationId)
-    {
-        // If there was a previous conversation subscription, unsubscribe
-        if ($this->conversationId) {
-            $this->dispatch('echo-leave', "App.Models.Conversation.{$this->conversationId}");
-        }
-
-        $this->conversationId = $conversationId;
-
-        // Subscribe to the new conversation channel
-        if ($this->conversationId) {
-            $this->dispatch('echo-join', "App.Models.Conversation.{$this->conversationId}");
-            $this->markAsRead();
-        }
-    }
-
     public function mount()
     {
         if ($this->conversationId) {
             $this->markAsRead();
-        }
-    }
-
-    protected function markAsRead()
-    {
-        if ($this->conversationId) {
-            $participant = ConversationParticipant::where([
-                'conversation_id' => $this->conversationId,
-                'user_id' => Auth::id(),
-            ])->first();
-
-            if ($participant) {
-                $participant->markAsRead();
-                $this->dispatch('refresh-unread-count');
-            }
         }
     }
 
@@ -64,7 +33,6 @@ class ChatBox extends Component
         if ($this->conversationId) {
             $conversation = Conversation::find($this->conversationId);
 
-            // Use the configured messages_per_page setting
             $perPage = config('jetstream-chat.messages_per_page', 50);
             $messages = $conversation->messages()
                 ->with('user')
@@ -87,6 +55,27 @@ class ChatBox extends Component
         ]);
     }
 
+    #[On('conversation-selected')]
+    public function loadConversation($conversationId)
+    {
+        if ($this->conversationId) {
+            $this->dispatch('echo-leave', channelName: "App.Models.Conversation.{$this->conversationId}");
+        }
+
+        $this->conversationId = $conversationId;
+
+        if ($this->conversationId) {
+            $this->dispatch('echo-join', channelName: "App.Models.Conversation.{$this->conversationId}");
+            $this->markAsRead();
+        }
+    }
+
+    #[On('message-received')]
+    public function handleNewMessage()
+    {
+        $this->dispatch('messages-updated');
+    }
+
     public function sendMessage()
     {
         $this->validate([
@@ -100,28 +89,24 @@ class ChatBox extends Component
         ]);
 
         $this->reset('messageText');
-        $this->dispatch('messagesUpdated');
 
+        $this->dispatch('messages-updated');
         MessageCreated::dispatch($message);
     }
 
-    public function getListeners()
+    public function markAsRead()
     {
-        $listeners = [
-            'conversation-selected' => 'loadConversation',
-            'message-received' => 'handleNewMessage',
-        ];
-
         if ($this->conversationId) {
-            $listeners["echo-private:App.Models.Conversation.{$this->conversationId},.MessageCreated"] = 'handleNewMessage';
+            $participant = ConversationParticipant::where([
+                'conversation_id' => $this->conversationId,
+                'user_id' => Auth::id(),
+            ])->first();
+
+            if ($participant) {
+                $participant->markAsRead();
+                $this->dispatch('conversation-read', conversationId: $this->conversationId);
+                ConversationRead::dispatch($this->conversationId, Auth::id());
+            }
         }
-
-        return $listeners;
-    }
-
-    public function handleNewMessage()
-    {
-        $this->dispatch('messagesUpdated');
-        $this->dispatch('refresh-unread-count');
     }
 }

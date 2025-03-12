@@ -46,7 +46,7 @@
         }"
         x-init="
             scrollToBottom();
-            Livewire.on('messagesUpdated', () => {
+            Livewire.on('messages-updated', () => {
                 $nextTick(() => scrollToBottom());
             });
             Livewire.on('message-received', () => {
@@ -85,7 +85,7 @@
     </div>
 
     <div class="flex-none sticky bottom-0 p-4 bg-white dark:bg-gray-800 border-t dark:border-gray-700 z-10">
-        <form wire:submit.prevent="sendMessage" class="flex space-x-2">
+        <form wire:submit="sendMessage" class="flex space-x-2">
             <x-input
                 type="text"
                 wire:model="messageText"

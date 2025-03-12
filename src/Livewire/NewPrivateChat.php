@@ -83,9 +83,10 @@ class NewPrivateChat extends Component
             'user_id' => $userId,
         ]);
 
-        // Broadcast the new conversation to both users
+        // Broadcast the new conversation
         ConversationCreated::dispatch($conversation);
 
+        // Update the UI
         $this->dispatch('conversation-selected', conversationId: $conversation->id);
         $this->dispatch('conversation-added');
         $this->closeModal();

@@ -2,13 +2,12 @@
 
 namespace Bleuren\JetstreamChat\Livewire;
 
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class BellNotification extends Component
 {
     public $unreadCount = 0;
-
-    protected $listeners = ['refresh-unread-count' => 'updateUnreadCount'];
 
     public function mount()
     {
@@ -19,12 +18,15 @@ class BellNotification extends Component
     {
         $userId = auth()->id();
 
-        return array_merge($this->listeners, [
+        return [
             "echo-private:App.Models.User.{$userId},.ConversationCreated" => 'updateUnreadCount',
             "echo-private:App.Models.User.{$userId},.MessageCreated" => 'updateUnreadCount',
-        ]);
+            "echo-private:App.Models.User.{$userId},.ConversationRead" => 'updateUnreadCount',
+        ];
     }
 
+    #[On('conversation-read')]
+    #[On('refresh-unread-count')]
     public function updateUnreadCount()
     {
         $user = auth()->user();
