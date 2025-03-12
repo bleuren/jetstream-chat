@@ -11,7 +11,7 @@ class ChatList extends Component
     public $activeConversationId = null;
 
     protected $listeners = [
-        'conversationAdded' => '$refresh',
+        'conversation-added' => '$refresh',
         'refresh-chat-list' => '$refresh',
     ];
 

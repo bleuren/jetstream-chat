@@ -79,7 +79,7 @@ class NewTeamChat extends Component
         ConversationCreated::dispatch($conversation);
 
         $this->dispatch('conversation-selected', conversationId: $conversation->id);
-        $this->dispatch('conversationAdded');
+        $this->dispatch('conversation-added');
         $this->closeModal();
     }
 }
