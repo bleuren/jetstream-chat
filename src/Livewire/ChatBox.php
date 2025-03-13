@@ -59,13 +59,13 @@ class ChatBox extends Component
     public function loadConversation($conversationId)
     {
         if ($this->conversationId) {
-            $this->dispatch('echo-leave', channelName: "App.Models.Conversation.{$this->conversationId}");
+            $this->dispatch('echo-leave', "App.Models.Conversation.{$this->conversationId}");
         }
 
         $this->conversationId = $conversationId;
 
         if ($this->conversationId) {
-            $this->dispatch('echo-join', channelName: "App.Models.Conversation.{$this->conversationId}");
+            $this->dispatch('echo-join', "App.Models.Conversation.{$this->conversationId}");
             $this->markAsRead();
         }
     }
