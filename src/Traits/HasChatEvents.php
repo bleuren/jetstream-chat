@@ -77,33 +77,6 @@ trait HasChatEvents
     }
 
     /**
-     * 標記所有會話為已讀
-     */
-    public function markAllAsRead()
-    {
-        $userId = Auth::id();
-
-        // 取得所有有未讀訊息的會話
-        $participants = ConversationParticipant::where('user_id', $userId)
-            ->where('unread_count', '>', 0)
-            ->get();
-
-        // 標記每個為已讀並發送各個事件
-        foreach ($participants as $participant) {
-            $conversationId = $participant->conversation_id;
-            $participant->markAsRead();
-
-            // 發送 Livewire 和廣播事件
-            $this->dispatch('conversation-read', conversationId: $conversationId);
-            ConversationRead::dispatch($conversationId, $userId);
-        }
-
-        // 更新 UI
-        $this->dispatch('refresh-unread-count');
-        $this->dispatch('refresh-chat-list');
-    }
-
-    /**
      * 標記會話為已讀並通知
      */
     protected function markConversationAsRead($conversationId)

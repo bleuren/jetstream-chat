@@ -2,13 +2,13 @@
 
 namespace Bleuren\JetstreamChat\Livewire;
 
-use Bleuren\JetstreamChat\Traits\HasMarkAllAsRead;
+use Bleuren\JetstreamChat\Traits\HasNotificationHandling;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
 class MarkAllAsRead extends Component
 {
-    use HasMarkAllAsRead;
+    use HasNotificationHandling;
 
     #[On('mark-all-as-read')]
     public function handleMarkAllAsRead()
