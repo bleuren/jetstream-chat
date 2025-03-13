@@ -2,28 +2,18 @@
 
 namespace Bleuren\JetstreamChat\Livewire;
 
-use Bleuren\JetstreamChat\Events\ConversationCreated;
 use Bleuren\JetstreamChat\Models\Conversation;
 use Bleuren\JetstreamChat\Models\ConversationParticipant;
 use Illuminate\Support\Facades\Auth;
-use Livewire\Component;
 
-class NewPrivateChat extends Component
+class NewPrivateChat extends ChatCreator
 {
-    public $showModal = false;
-
     public $searchQuery = '';
 
     public $searchResults = [];
 
-    public function openModal()
+    protected function resetModalData()
     {
-        $this->showModal = true;
-    }
-
-    public function closeModal()
-    {
-        $this->showModal = false;
         $this->reset('searchQuery', 'searchResults');
     }
 
@@ -34,11 +24,9 @@ class NewPrivateChat extends Component
 
     public function updatedSearchQuery()
     {
-        // Use the configured minimum character count for search
         $minChars = config('jetstream-chat.search_min_characters', 2);
 
         if (strlen($this->searchQuery) >= $minChars) {
-            // Use the configured user model if set, otherwise fall back to the default auth model
             $userModel = config('jetstream-chat.user_model') ?: config('auth.providers.users.model');
             $this->searchResults = $userModel::where('name', 'like', "%{$this->searchQuery}%")
                 ->where('id', '!=', Auth::id())
@@ -51,6 +39,7 @@ class NewPrivateChat extends Component
 
     public function startConversation($userId)
     {
+        // 檢查是否已有對話
         $existingParticipations = ConversationParticipant::where('user_id', Auth::id())
             ->pluck('conversation_id');
 
@@ -68,27 +57,10 @@ class NewPrivateChat extends Component
             return;
         }
 
-        $conversation = Conversation::create([
-            'type' => 'private',
-        ]);
-
-        ConversationParticipant::create([
-            'conversation_id' => $conversation->id,
-            'user_id' => Auth::id(),
-            'last_read_at' => now(),
-        ]);
-
-        ConversationParticipant::create([
-            'conversation_id' => $conversation->id,
-            'user_id' => $userId,
-        ]);
-
-        // Broadcast the new conversation
-        ConversationCreated::dispatch($conversation);
-
-        // Update the UI
-        $this->dispatch('conversation-selected', conversationId: $conversation->id);
-        $this->dispatch('conversation-added');
-        $this->closeModal();
+        // 創建新對話
+        $this->createConversation(
+            ['type' => 'private'],
+            [Auth::id(), $userId]
+        );
     }
 }

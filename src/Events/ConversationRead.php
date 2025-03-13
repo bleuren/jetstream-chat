@@ -13,7 +13,7 @@ class ConversationRead implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
-     * Create a new event instance.
+     * 創建新事件實例
      */
     public function __construct(
         public int $conversationId,
@@ -21,9 +21,7 @@ class ConversationRead implements ShouldBroadcast
     ) {}
 
     /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return array<int, \Illuminate\Broadcasting\Channel>
+     * 獲取事件應該廣播的頻道
      */
     public function broadcastOn(): array
     {

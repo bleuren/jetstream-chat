@@ -2,16 +2,13 @@
 
 namespace Bleuren\JetstreamChat\Livewire;
 
-use Bleuren\JetstreamChat\Events\ConversationRead;
 use Bleuren\JetstreamChat\Events\MessageCreated;
 use Bleuren\JetstreamChat\Models\Conversation;
-use Bleuren\JetstreamChat\Models\ConversationParticipant;
 use Bleuren\JetstreamChat\Models\Message;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\On;
-use Livewire\Component;
 
-class ChatBox extends Component
+class ChatBox extends ChatComponents
 {
     public $conversationId = null;
 
@@ -20,53 +17,55 @@ class ChatBox extends Component
     public function mount()
     {
         if ($this->conversationId) {
-            $this->markAsRead();
+            $this->markConversationAsRead($this->conversationId);
         }
     }
 
     public function render()
     {
-        $messages = [];
-        $conversation = null;
-        $participants = [];
+        $data = [
+            'messages' => collect(),
+            'conversation' => null,
+            'participants' => collect(),
+        ];
 
         if ($this->conversationId) {
-            $conversation = Conversation::find($this->conversationId);
+            $conversation = Conversation::with('team')->find($this->conversationId);
 
-            $perPage = config('jetstream-chat.messages_per_page', 50);
-            $messages = $conversation->messages()
-                ->with('user')
-                ->latest()
-                ->limit($perPage)
-                ->get();
+            if ($conversation) {
+                $perPage = config('jetstream-chat.messages_per_page', 50);
 
-            if ($conversation->type == 'private') {
-                $participants = $conversation->participants()
-                    ->with('user')
-                    ->get()
-                    ->pluck('user');
+                $data = [
+                    'messages' => $conversation->messages()
+                        ->with('user')
+                        ->latest()
+                        ->limit($perPage)
+                        ->get(),
+                    'conversation' => $conversation,
+                    'participants' => $conversation->type == 'private'
+                        ? $conversation->participants()->with('user')->get()->pluck('user')
+                        : collect(),
+                ];
             }
         }
 
-        return view('jetstream-chat::livewire.chat-box', [
-            'messages' => $messages,
-            'conversation' => $conversation,
-            'participants' => $participants,
-        ]);
+        return view('jetstream-chat::livewire.chat-box', $data);
     }
 
     #[On('conversation-selected')]
     public function loadConversation($conversationId)
     {
+        // 離開舊的聊天頻道
         if ($this->conversationId) {
-            $this->dispatch('echo-leave', "App.Models.Conversation.{$this->conversationId}");
+            $this->leaveConversationChannel($this->conversationId);
         }
 
         $this->conversationId = $conversationId;
 
+        // 加入新的聊天頻道
         if ($this->conversationId) {
-            $this->dispatch('echo-join', "App.Models.Conversation.{$this->conversationId}");
-            $this->markAsRead();
+            $this->joinConversationChannel($this->conversationId);
+            $this->markConversationAsRead($this->conversationId);
         }
     }
 
@@ -76,7 +75,7 @@ class ChatBox extends Component
         $this->dispatch('messages-updated');
 
         if ($this->conversationId) {
-            $this->markAsRead();
+            $this->markConversationAsRead($this->conversationId);
         }
     }
 
@@ -96,21 +95,5 @@ class ChatBox extends Component
 
         $this->dispatch('messages-updated');
         MessageCreated::dispatch($message);
-    }
-
-    public function markAsRead()
-    {
-        if ($this->conversationId) {
-            $participant = ConversationParticipant::where([
-                'conversation_id' => $this->conversationId,
-                'user_id' => Auth::id(),
-            ])->first();
-
-            if ($participant) {
-                $participant->markAsRead();
-                $this->dispatch('conversation-read', conversationId: $this->conversationId);
-                ConversationRead::dispatch($this->conversationId, Auth::id());
-            }
-        }
     }
 }

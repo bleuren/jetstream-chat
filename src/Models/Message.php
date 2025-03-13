@@ -20,7 +20,7 @@ class Message extends Model
 
     public function user(): BelongsTo
     {
-        // Use the configured user model if set, otherwise fall back to the default auth model
+        // 使用設定檔中的使用者模型或預設的認證模型
         $userModel = config('jetstream-chat.user_model') ?: config('auth.providers.users.model');
 
         return $this->belongsTo($userModel);

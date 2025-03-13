@@ -5,17 +5,16 @@ namespace Bleuren\JetstreamChat\Livewire;
 use Bleuren\JetstreamChat\Models\Conversation;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\On;
-use Livewire\Component;
 
-class ChatList extends Component
+class ChatList extends ChatComponents
 {
     public $activeConversationId = null;
 
     public function render()
     {
         return view('jetstream-chat::livewire.chat-list', [
-            'privateConversations' => $this->getPrivateConversations(),
-            'teamConversations' => $this->getTeamConversations(),
+            'privateConversations' => $this->getConversations('private'),
+            'teamConversations' => $this->getConversations('team'),
         ]);
     }
 
@@ -26,79 +25,36 @@ class ChatList extends Component
         $this->markConversationAsRead($conversationId);
     }
 
-    public function getListeners()
+    /**
+     * 取得指定類型的會話列表
+     */
+    private function getConversations($type)
     {
-        $userId = auth()->id();
+        $userId = Auth::id();
+        $query = Conversation::where('type', $type);
 
-        return [
-            "echo-private:App.Models.User.{$userId},.ConversationCreated" => 'handleConversationCreated',
-            "echo-private:App.Models.User.{$userId},.MessageCreated" => 'handleMessageCreated',
-            "echo-private:App.Models.User.{$userId},.ConversationRead" => 'handleConversationRead',
-        ];
+        if ($type === 'private') {
+            $participantIds = Auth::user()->conversations()->pluck('conversation_id');
+            $query->whereIn('id', $participantIds);
+        } elseif ($type === 'team') {
+            $teamIds = Auth::user()->allTeams()->pluck('id');
+            $query->whereIn('team_id', $teamIds);
+        }
+
+        return $query->with([
+            'latestMessage',
+            'currentUserParticipant',
+            $type === 'team' ? 'team' : 'otherParticipants.user',
+        ])->get();
     }
 
-    public function handleConversationCreated()
-    {
-        $this->refreshList();
-    }
-
-    public function handleMessageCreated()
-    {
-        $this->refreshList();
-    }
-
-    #[On('conversation-read')]
-    public function handleConversationRead($conversationId = null)
-    {
-        $this->refreshList();
-    }
-
+    /**
+     * 處理元件重新整理
+     */
     #[On('conversation-added')]
     #[On('refresh-chat-list')]
-    public function refreshList()
+    protected function refreshComponent()
     {
-        // 觸發組件重新渲染
-    }
-
-    private function getPrivateConversations()
-    {
-        $user = Auth::user();
-        $privateConversationIds = $user->conversations()->pluck('conversation_id');
-
-        return Conversation::where('type', 'private')
-            ->whereIn('id', $privateConversationIds)
-            ->with([
-                'latestMessage',
-                'currentUserParticipant',
-                'otherParticipants.user',
-            ])
-            ->get();
-    }
-
-    private function getTeamConversations()
-    {
-        $user = Auth::user();
-        $teamIds = $user->allTeams()->pluck('id');
-
-        return Conversation::where('type', 'team')
-            ->whereIn('team_id', $teamIds)
-            ->with([
-                'team',
-                'latestMessage',
-                'currentUserParticipant',
-            ])
-            ->get();
-    }
-
-    private function markConversationAsRead($conversationId)
-    {
-        $conversation = Conversation::find($conversationId);
-        if ($conversation) {
-            $participant = $conversation->currentUserParticipant;
-            if ($participant) {
-                $participant->markAsRead();
-                $this->dispatch('conversation-read', conversationId: $conversationId);
-            }
-        }
+        // 觸發元件重新渲染
     }
 }

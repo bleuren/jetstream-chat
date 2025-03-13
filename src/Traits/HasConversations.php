@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 trait HasConversations
 {
     /**
-     * Get the conversations for the user.
+     * 取得使用者的會話
      */
     public function conversations(): HasMany
     {
@@ -16,7 +16,7 @@ trait HasConversations
     }
 
     /**
-     * Get the total count of unread messages for the user.
+     * 取得使用者未讀訊息總數
      */
     public function unreadMessagesCount(): int
     {

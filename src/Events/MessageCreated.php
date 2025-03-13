@@ -14,11 +14,11 @@ class MessageCreated implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
-     * Create a new event instance.
+     * 創建新事件實例
      */
     public function __construct(public Message $message)
     {
-        // Update unread count for all participants except sender
+        // 更新除發送者外所有參與者的未讀計數
         $conversation = $message->conversation;
         $participants = $conversation->participants()
             ->where('user_id', '!=', $message->user_id)
@@ -30,20 +30,18 @@ class MessageCreated implements ShouldBroadcast
     }
 
     /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return array<int, \Illuminate\Broadcasting\Channel>
+     * 獲取事件應該廣播的頻道
      */
     public function broadcastOn(): array
     {
         $channels = [];
 
-        // Add channel for each participant (except sender)
+        // 為每個參與者添加頻道 (除發送者外)
         foreach ($this->message->conversation->otherParticipants as $participant) {
             $channels[] = new PrivateChannel('App.Models.User.'.$participant->user_id);
         }
 
-        // Add channel for the conversation
+        // 為會話添加頻道
         $channels[] = new PrivateChannel('App.Models.Conversation.'.$this->message->conversation_id);
 
         return $channels;

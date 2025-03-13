@@ -25,14 +25,14 @@ class ConversationParticipant extends Model
 
     public function user(): BelongsTo
     {
-        // Use the configured user model if set, otherwise fall back to the default auth model
+        // 使用設定檔中的使用者模型或預設的認證模型
         $userModel = config('jetstream-chat.user_model') ?: config('auth.providers.users.model');
 
         return $this->belongsTo($userModel);
     }
 
     /**
-     * Mark conversation as read for this participant.
+     * 將會話標記為已讀
      */
     public function markAsRead()
     {
@@ -43,7 +43,7 @@ class ConversationParticipant extends Model
     }
 
     /**
-     * Increment unread count for this participant.
+     * 增加未讀計數
      */
     public function incrementUnread()
     {
