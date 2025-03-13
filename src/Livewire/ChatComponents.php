@@ -20,7 +20,7 @@ abstract class ChatComponents extends Component
     /**
      * 重新整理元件，子類別可覆寫特定邏輯
      */
-    protected function refreshComponent()
+    public function refreshComponent()
     {
         // 預設實作為空
     }

@@ -53,7 +53,7 @@ class ChatList extends ChatComponents
      */
     #[On('conversation-added')]
     #[On('refresh-chat-list')]
-    protected function refreshComponent()
+    public function refreshComponent()
     {
         // 觸發元件重新渲染
     }
