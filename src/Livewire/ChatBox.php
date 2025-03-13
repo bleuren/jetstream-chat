@@ -74,6 +74,10 @@ class ChatBox extends Component
     public function handleNewMessage()
     {
         $this->dispatch('messages-updated');
+
+        if ($this->conversationId) {
+            $this->markAsRead();
+        }
     }
 
     public function sendMessage()
