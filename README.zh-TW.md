@@ -208,4 +208,4 @@ Jetstream Chat 設計上注重高度擴充性，您可以：
 
 ## 許可證
 
-Jetstream Chat 採用 [MIT License](LICENSE.md) 授權。您可以自由使用、修改與分發此套件，詳情請參閱 LICENSE 文件。
+Jetstream Chat 採用 [MIT License](LICENSE) 授權。您可以自由使用、修改與分發此套件，詳情請參閱 LICENSE 文件。

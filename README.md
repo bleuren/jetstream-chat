@@ -208,4 +208,4 @@ We welcome any form of contribution and feedback!
 
 ## License
 
-Jetstream Chat is licensed under the [MIT License](LICENSE.md). You are free to use, modify, and distribute this package, please refer to the LICENSE file for details.
+Jetstream Chat is licensed under the [MIT License](LICENSE). You are free to use, modify, and distribute this package, please refer to the LICENSE file for details.
