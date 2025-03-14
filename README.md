@@ -18,6 +18,11 @@
   - [Real-time Features](#real-time-features)
 - [Features](#features)
 - [Customization and Extension](#customization-and-extension)
+  - [Overriding Views](#overriding-views)
+  - [Adjusting Configuration](#adjusting-configuration)
+  - [Customizing Translations](#customizing-translations)
+  - [Extending Livewire Components](#extending-livewire-components)
+  - [Extending Event Logic](#extending-event-logic)
 - [Contribution](#contribution)
 - [License](#license)
 - [Support](#support)
@@ -184,17 +189,62 @@ You can also override the package's views and translation files as needed.
 
 Jetstream Chat is designed with a focus on high extensibility, you can:
 
-- **Override Views**  
-  After publishing, views are located in `resources/views/vendor/jetstream-chat`, you can modify the interface according to your project style.
+### Overriding Views  
+After publishing, views are located in `resources/views/vendor/jetstream-chat`, you can modify the interface according to your project style.
 
-- **Adjust Configuration**  
-  Modify `config/jetstream-chat.php` to adjust chat path, message pagination numbers, search character limits, and other parameters.
+### Adjusting Configuration  
+Modify `config/jetstream-chat.php` to adjust chat path, message pagination numbers, search character limits, and other parameters.
 
-- **Customize Translations**  
-  Modify language files in `lang/vendor/jetstream-chat`, add or modify translation content.
+### Customizing Translations  
+Modify language files in `lang/vendor/jetstream-chat`, add or modify translation content.
 
-- **Extend Event Logic**  
-  Reference event implementations in the `src/Events` directory (such as `ConversationCreated`, `MessageCreated`, `ConversationRead`), and extend broadcasting or event handling processes as needed.
+### Extending Livewire Components
+The recommended approach for customizing Livewire components is through inheritance. This method provides a good balance between flexibility and maintainability:
+
+1. **Create a custom component by extending the base component**:
+
+```php
+// In your application: app/Livewire/CustomChatBox.php
+namespace App\Livewire;
+
+use Bleuren\JetstreamChat\Livewire\ChatBox as BaseChatBox;
+
+class CustomChatBox extends BaseChatBox
+{
+    // Override only the methods you need to customize
+    public function render()
+    {
+        // You can use your own view or modify the original logic
+        $data = parent::render()->getData();
+        // Additional logic...
+        
+        return view('your-custom-view', $data);
+    }
+}
+```
+
+2. **Register your custom component** in your `AppServiceProvider` or a dedicated Livewire service provider:
+
+```php
+// In app/Providers/AppServiceProvider.php
+use Livewire\Livewire;
+use App\Livewire\CustomChatBox;
+
+public function boot()
+{
+    // Override the original component registration
+    Livewire::component('chat-box', CustomChatBox::class);
+}
+```
+
+This inheritance approach offers several advantages:
+- Maintains a clean separation from the package core
+- Selectively override only what needs customization
+- Automatically benefits from base class improvements when the package updates
+- Simple implementation, requiring only creation of new classes and registration
+
+### Extending Event Logic  
+Reference event implementations in the `src/Events` directory (such as `ConversationCreated`, `MessageCreated`, `ConversationRead`), and extend broadcasting or event handling processes as needed.
 
 ---
 

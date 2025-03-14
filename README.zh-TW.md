@@ -18,6 +18,11 @@
   - [即時功能](#即時功能)
 - [功能特性](#功能特性)
 - [自定義與擴充](#自定義與擴充)
+  - [覆寫視圖](#覆寫視圖)
+  - [調整配置](#調整配置)
+  - [自訂翻譯](#自訂翻譯)
+  - [擴展Livewire組件](#擴展livewire組件)
+  - [擴展事件邏輯](#擴展事件邏輯)
 - [貢獻](#貢獻)
 - [許可證](#許可證)
 - [支援](#支援)
@@ -184,17 +189,62 @@ window.Echo = new Echo({
 
 Jetstream Chat 設計上注重高度擴充性，您可以：
 
-- **覆寫視圖**  
-  發佈後，視圖位於 `resources/views/vendor/jetstream-chat`，您可以根據專案風格修改介面。
+### 覆寫視圖  
+發佈後，視圖位於 `resources/views/vendor/jetstream-chat`，您可以根據專案風格修改介面。
 
-- **調整配置**  
-  修改 `config/jetstream-chat.php` 以調整聊天路徑、消息分頁數、搜尋字符限制等參數。
+### 調整配置  
+修改 `config/jetstream-chat.php` 以調整聊天路徑、消息分頁數、搜尋字符限制等參數。
 
-- **自訂翻譯**  
-  修改 `lang/vendor/jetstream-chat` 中的語系檔案，新增或修改翻譯內容。
+### 自訂翻譯  
+修改 `lang/vendor/jetstream-chat` 中的語系檔案，新增或修改翻譯內容。
 
-- **擴展事件邏輯**  
-  參考 `src/Events` 目錄中的事件實作（如 `ConversationCreated`、`MessageCreated`、`ConversationRead`），根據需要擴展廣播或事件處理流程。
+### 擴展Livewire組件
+推薦通過繼承方式來自定義Livewire組件。這種方法在靈活性和可維護性之間提供了良好的平衡：
+
+1. **通過繼承基礎組件來創建自定義組件**：
+
+```php
+// 在您的應用程式中：app/Livewire/CustomChatBox.php
+namespace App\Livewire;
+
+use Bleuren\JetstreamChat\Livewire\ChatBox as BaseChatBox;
+
+class CustomChatBox extends BaseChatBox
+{
+    // 只覆寫您需要自定義的方法
+    public function render()
+    {
+        // 您可以使用自己的視圖或修改原始邏輯
+        $data = parent::render()->getData();
+        // 額外邏輯...
+        
+        return view('your-custom-view', $data);
+    }
+}
+```
+
+2. **在 `AppServiceProvider` 或專門的 Livewire 服務提供者中註冊您的自定義組件**：
+
+```php
+// 在 app/Providers/AppServiceProvider.php
+use Livewire\Livewire;
+use App\Livewire\CustomChatBox;
+
+public function boot()
+{
+    // 覆寫原始組件註冊
+    Livewire::component('chat-box', CustomChatBox::class);
+}
+```
+
+這種繼承方式提供了以下優點：
+- 與套件核心保持清晰的分離
+- 選擇性地只覆寫需要自定義的部分
+- 當套件更新時，自動受益於基礎類的改進
+- 實現簡單，只需創建新類和註冊即可
+
+### 擴展事件邏輯  
+參考 `src/Events` 目錄中的事件實作（如 `ConversationCreated`、`MessageCreated`、`ConversationRead`），根據需要擴展廣播或事件處理流程。
 
 ---
 
