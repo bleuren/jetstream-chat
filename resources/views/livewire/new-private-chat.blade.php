@@ -1,10 +1,10 @@
 <div>
-    <x-button
+    <button
         wire:click="openModal"
-        class="flex items-center">
-        <x-heroicon-o-plus class="w-4 h-4 mr-2" />
-        {{ __('jetstream-chat::jetstream-chat.new_private_chat') }}
-    </x-button>
+        class="p-2 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none transition-colors duration-200 ease-in-out"
+        title="{{ __('jetstream-chat::jetstream-chat.new_private_chat') }}">
+        <x-heroicon-o-user-plus class="w-5 h-5" />
+    </button>
 
     <x-dialog-modal wire:model="showModal">
         <x-slot name="title">
