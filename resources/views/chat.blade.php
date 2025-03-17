@@ -15,7 +15,7 @@
                     <div class="col-span-1 border-r dark:border-gray-700 bg-gray-50 dark:bg-gray-900 h-full overflow-hidden">
                         <div class="h-full flex flex-col">
                             <div class="flex-none p-4 space-y-3 border-b dark:border-gray-700 bg-white dark:bg-gray-800">
-                                <div class="flex justify-between items-center">
+                                <div class="flex justify-center items-center">
                                     <div class="flex space-x-2">
                                         <livewire:new-private-chat />
                                         <livewire:new-team-chat />
