@@ -49,7 +49,7 @@
                                     </span>
                                     @endif
                                 </div>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">
+                                <p class="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 overflow-hidden">
                                     @if($conversation->latestMessage)
                                     {{ $conversation->latestMessage->body }}
                                     @else
